@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced FLAMES Game</title>
+    <style>
+        body {
+            background-color: #1c1c1c;
+            color: #f0f0f0;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 3em;
+            color: #ff6347;
+            text-shadow: 0 0 20px #ff6347;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        input[type="text"] {
+            background-color: #333;
+            border: none;
+            border-radius: 5px;
+            padding: 15px;
+            font-size: 1.2em;
+            color: #fff;
+            margin: 10px;
+            width: 300px;
+        }
+
+        button {
+            background-color: #ff6347;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #ff4500;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 24px;
+            text-align: center;
+            visibility: hidden;
+        }
+
+        .result.show {
+            visibility: visible;
+        }
+
+        .glow {
+            font-weight: bold;
+            color: #ff6347;
+            text-shadow: 0 0 15px #ff6347;
+            animation: glow 1.5s infinite alternate;
+        }
+
+        .processing {
+            color: #ff6347;
+            font-size: 1.5em;
+            text-align: center;
+            margin-top: 20px;
+            visibility: hidden;
+        }
+
+        .processing.show {
+            visibility: visible;
+            animation: fadeInOut 2s infinite;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 10px #ff6347;
+            }
+            to {
+                text-shadow: 0 0 20px #ffa07a;
+            }
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>FLAMES Game</h1>
+    <div class="container">
+        <input type="text" id="name1" placeholder="Enter first name">
+        <input type="text" id="name2" placeholder="Enter second name">
+        
+        <div class="buttons">
+            <button onclick="calculateFLAMES()">Calculate FLAMES</button>
+            <button onclick="clearFields()">Clear</button>
+            <button onclick="refreshPage()">Refresh</button>
+        </div>
+
+        <div class="processing" id="processing">Calculating...</div>
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        function calculateFLAMES() {
+            let name1 = document.getElementById('name1').value.toLowerCase().replace(/\s+/g, '');
+            let name2 = document.getElementById('name2').value.toLowerCase().replace(/\s+/g, '');
+            
+            if (name1 === "" || name2 === "") {
+                alert("Please enter both names");
+                return;
+            }
+
+            // Show the processing animation
+            document.getElementById('processing').classList.add('show');
+            document.getElementById('result').classList.remove('show');
+
+            // Remove common letters
+            for (let char of name1) {
+                if (name2.includes(char)) {
+                    name1 = name1.replace(char, '');
+                    name2 = name2.replace(char, '');
+                }
+            }
+
+            let remainingLettersCount = name1.length + name2.length;
+            let flames = ['F', 'L', 'A', 'M', 'E', 'S'];
+            let flamesMeaning = {
+                'F': 'Friends',
+                'L': 'Love',
+                'A': 'Attraction',
+                'M': 'Marriage',
+                'E': 'Enemy',
+                'S': 'Sister'
+            };
+
+            let index = 0;
+            while (flames.length > 1) {
+                index = (index + remainingLettersCount - 1) % flames.length;
+                flames.splice(index, 1);
+            }
+
+            let finalLetter = flames[0];
+            let resultText = flamesMeaning[finalLetter];
+
+            // Simulate processing time (2 seconds) before showing the result
+            setTimeout(function() {
+                document.getElementById('processing').classList.remove('show');
+                document.getElementById('result').innerHTML = `
+                    The Relation Between them is  <span class="glow">${finalLetter}</span>: <br>
+                    <span class="glow">${resultText}</span>
+                `;
+                document.getElementById('result').classList.add('show');
+            }, 2000);
+        }
+
+        function clearFields() {
+            document.getElementById('name1').value = '';
+            document.getElementById('name2').value = '';
+            document.getElementById('result').classList.remove('show');
+            document.getElementById('processing').classList.remove('show');
+        }
+
+        function refreshPage() {
+            location.reload();
+        }
+    </script>
+
+</body>
+</html>
